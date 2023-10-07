@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'meconomics.com', ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
