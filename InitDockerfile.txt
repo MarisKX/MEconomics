@@ -3,10 +3,9 @@ LABEL maintainer="mariskx"
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /tmp/requirements.txt
-COPY ./requirements.dev.txt /tmp/requirements.dev.txt
-COPY ./django_meconomics /django_meconomics
+COPY ./template /template
 
-WORKDIR /django_meconomics
+WORKDIR /template
 EXPOSE 8000
 
 ARG DEV=false
@@ -14,9 +13,6 @@ ARG DEV=false
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     /py/bin/pip install -r /tmp/requirements.txt && \
-    if [ $DEV = "true" ] ; \
-        then echo "--DEV BUILD--" && /py/bin/pip install -r /tmp/requirements.dev.txt ; \
-    fi && \
     rm -rf /tmp && \
     adduser \
         --disabled-password \

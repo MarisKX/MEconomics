@@ -4,9 +4,9 @@ ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
-COPY ./django_meconomics /django_meconomics
+COPY ./template /template
 
-WORKDIR /django_meconomics
+WORKDIR /template
 EXPOSE 8000
 
 ARG DEV=false
