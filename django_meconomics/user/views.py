@@ -1,7 +1,13 @@
 """
 Views for the user API
 """
-from rest_framework import generics, authentication, permissions, status, viewsets
+from rest_framework import (
+    generics,
+    authentication,
+    permissions,
+    status,
+    viewsets
+)
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
@@ -137,7 +143,6 @@ class AllUsersView(viewsets.ModelViewSet):
         user_id = self.request.query_params.get('truck_id_user')
         print(user_id)
         if user_id is not None:
-            # If truck_id is provided in the URL, filter maintenance logs by truck
             queryset = queryset.filter(id=user_id)
 
         return queryset
