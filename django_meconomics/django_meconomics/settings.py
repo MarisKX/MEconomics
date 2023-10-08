@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     # Add Ons
     "django_extensions",
     'rest_framework',
-    # 'drf_spectacular',
+    'drf_spectacular',
     'rest_framework.authtoken',
     # 'corsheaders',
     # Custom Apps
@@ -134,3 +134,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'COMPONENT_SPLIT_REQUEST': True,
+}
