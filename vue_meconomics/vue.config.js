@@ -12,7 +12,7 @@ module.exports = defineConfig({
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      allowedHosts: ["meconomics.com", "localhost", "0.0.0.0", ],
+      allowedHosts: ["meconomics.com", "localhost", "0.0.0.0"],
       https: {
         key: fs.readFileSync("./ssl/key.pem"),
         cert: fs.readFileSync("./ssl/cert.pem"),

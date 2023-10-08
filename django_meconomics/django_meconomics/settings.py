@@ -28,6 +28,26 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'meconomics.com', ]
 
+SSL_ENABLED = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://meconomics.com:8005",
+    "https://localhost:8005",
+]
+
+CORS_ORIGIN_WHITELIST = [
+    "https://meconomics.com:8005",  # Vue's address
+    "https://meconomics.com:8000",  # Django's address (you can include it too for safety, though it might not be strictly necessary)
+    "https://localhost:8005",
+    "https://localhost:8000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://meconomics.com:8005",
+    "https://meconomics.com:8000",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,12 +62,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'rest_framework.authtoken',
-    # 'corsheaders',
+    'corsheaders',
     # Custom Apps
     'core',
+    'user',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,6 +77,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'user.middlewares.TokenExpiryMiddleware',
 ]
 
 ROOT_URLCONF = 'django_meconomics.urls'
