@@ -35,7 +35,6 @@ services:
     volumes:
       - ./vue_meconomics:/vue_meconomics
       - /vue_meconomics/node_modules
-      # - ./vue_meconomics/ssl:/vue_meconomics/ssl
     depends_on:
       - django
     networks:
