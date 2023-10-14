@@ -1,0 +1,29 @@
+/* Colors - Text and Background */
+
+.text-green {
+  color: rgb(117, 175, 74) !important;
+}
+
+.text-red {
+  color: red !important;
+}
+
+.text-orange {
+  color: orange !important;
+}
+
+.text-brown {
+  color: rgb(100, 52, 41) !important;
+}
+
+.text-white {
+  color: white;
+}
+
+.bg-brown {
+  background-color: rgb(100, 52, 41) !important;
+}
+
+.bg-green {
+  background-color: rgb(117, 175, 74) !important;
+}

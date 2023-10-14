@@ -7,7 +7,7 @@
 <script>
 import TopNav from "../components/TopNav.vue";
 export default {
-  name: "HomeView",
+  name: "CitizenDetailsView",
   components: {
     TopNav,
   },

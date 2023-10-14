@@ -2,6 +2,7 @@
   <div class="backdrop">
     <div class="login">
       <hr />
+      <div class="feedback-error" v-if="feedback">{{ feedback }}</div>
       <form @submit.prevent="login">
         <label>Email:</label>
         <input type="email" required v-model="email" />
@@ -25,6 +26,7 @@ export default {
     return {
       email: "",
       password: "",
+      feedback: "",
     };
   },
   methods: {
@@ -48,6 +50,18 @@ export default {
         })
         .catch((error) => {
           console.log("Auth failed: ", error);
+          if (error.response) {
+            if (error.response.status === 400) {
+              // Incorrect username/password
+              this.feedback = "Incorrect username/email and/or password";
+            } else {
+              // Other server-related errors
+              this.feedback = "Service unavailable. Please try again later.";
+            }
+          } else {
+            // Network or client-side errors
+            this.feedback = "An error occurred. Please check your connection.";
+          }
         });
     },
   },
@@ -96,5 +110,9 @@ button {
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: bold;
+}
+.feedback-error {
+  color: red;
+  margin-top: 10px; /* Adjust the spacing as needed */
 }
 </style>

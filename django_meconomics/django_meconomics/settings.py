@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     # Custom Apps
     'core',
     'user',
+    'citizens',
+    'companies',
 ]
 
 MIDDLEWARE = [

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store";
 import HomeView from "../views/HomeView.vue";
+import CitizenView from "../views/CitizenView.vue";
 
 const routes = [
   {
@@ -8,6 +9,22 @@ const routes = [
     name: "home",
     component: HomeView,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/citizens",
+    name: "citizens",
+    component: CitizenView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/citizens-details/:id",
+    name: "citizens-details",
+    component: () =>
+      import(
+        /* webpackChunkName: "citizens" */ "../views/CitizensDetailsView.vue"
+      ),
+    meta: { requiresAuth: true },
+    props: true, // This line is important
   },
   {
     path: "/login",
@@ -25,7 +42,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = store.state.isAuthenticated;
-  console.log(isAuthenticated);
 
   if (
     to.matched.some((record) => record.meta.requiresAuth) &&
