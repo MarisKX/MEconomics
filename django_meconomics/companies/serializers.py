@@ -56,9 +56,7 @@ class CompanySerializer(serializers.ModelSerializer):
             validated_data['owner_type'] = '0'  # '0' corresponds to 'Private'
         elif validated_data.get('owner_com'):
             validated_data['owner_type'] = '1'  # '1' corresponds to 'Company'
-        # Optionally, you can handle the 'Government Institution' case if needed.
         return super().create(validated_data)
-
 
     def update(self, instance, validated_data):
         """Update and return a company"""
