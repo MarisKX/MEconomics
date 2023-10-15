@@ -32,8 +32,8 @@ class Company(models.Model):
         blank=True,
         related_name='child_companies'
     )
-    name_low = models.CharField(max_length=100)
-    name = models.CharField(max_length=100, blank=True)
+    name_low = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=100)
     warehouse = models.BooleanField(default=True)
     registration_number = models.BigIntegerField(
         blank=True,
@@ -116,9 +116,7 @@ class Company(models.Model):
             )
 
     def save(self, *args, **kwargs):
-
         self.clean()
-
         if not self.registration_number:
             company_count = Company.objects.all().count() or 0
             self.registration_number = (
@@ -137,5 +135,4 @@ class Company(models.Model):
             self.average_salary_brutto = (
                 self.total_bruto_salaries / self.employee_count
             )
-
         super().save(*args, **kwargs)

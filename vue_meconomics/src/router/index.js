@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store";
 import HomeView from "../views/HomeView.vue";
 import CitizenView from "../views/CitizenView.vue";
+import CompanyView from "../views/CompanyView.vue";
 
 const routes = [
   {
@@ -17,11 +18,27 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/citizens-details/:id",
-    name: "citizens-details",
+    path: "/citizen-details/:id",
+    name: "citizen-details",
     component: () =>
       import(
-        /* webpackChunkName: "citizens" */ "../views/CitizensDetailsView.vue"
+        /* webpackChunkName: "citizens" */ "../views/CitizenDetailsView.vue"
+      ),
+    meta: { requiresAuth: true },
+    props: true, // This line is important
+  },
+  {
+    path: "/companies",
+    name: "companies",
+    component: CompanyView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/company-details/:id",
+    name: "company-details",
+    component: () =>
+      import(
+        /* webpackChunkName: "citizens" */ "../views/CompanyDetailsView.vue"
       ),
     meta: { requiresAuth: true },
     props: true, // This line is important

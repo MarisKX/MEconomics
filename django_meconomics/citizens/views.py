@@ -1,5 +1,5 @@
 """
-Views for the recipe API's
+Views for the citizens API's
 """
 from rest_framework import (
     viewsets,

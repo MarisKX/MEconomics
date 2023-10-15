@@ -1,5 +1,5 @@
 <template>
-  <div class="citizens">
+  <div class="companies">
     <TopNav />
     <div class="main">
       <div
@@ -10,16 +10,16 @@
       >
         <i class="fas fa-plus"></i>
       </div>
-      <AddCitizenModal
+      <AddCompanyModal
         :isVisible="showModal"
         @close="toggleModal"
-        @citizenAdded="handleCitizenAdded"
-      ></AddCitizenModal>
-      <div v-if="showTooltip" class="tooltip">Add New Citizen</div>
+        @companyAdded="handleCompanyAdded"
+      ></AddCompanyModal>
+      <div v-if="showTooltip" class="tooltip">Add New Company</div>
       <TableView
         :visibleColumns="visibleColumns"
-        :items="citizens"
-        :detailsRouteName="'citizen-details'"
+        :items="companies"
+        :detailsRouteName="'company-details'"
       />
     </div>
   </div>
@@ -28,19 +28,19 @@
 <script>
 import axios from "axios";
 import TopNav from "../components/TopNav.vue";
-import AddCitizenModal from "../components/AddCitizenModal.vue";
+import AddCompanyModal from "../components/AddCompanyModal.vue";
 import TableView from "../components/TableView.vue";
 export default {
-  name: "CitizenView",
+  name: "CompanyView",
   components: {
     TopNav,
-    AddCitizenModal,
+    AddCompanyModal,
     TableView,
   },
   data() {
     return {
       columns: [],
-      citizens: [],
+      companies: [],
       showTooltip: false,
       showModal: false,
     };
@@ -57,7 +57,7 @@ export default {
     async fetchData() {
       try {
         const response = await axios.get(
-          "https://meconomics.com:8000/api/citizen/citizens/",
+          "https://meconomics.com:8000/api/company/companies/",
           {
             headers: {
               "X-CSRFToken": this.csrfToken,
@@ -66,8 +66,8 @@ export default {
         );
 
         if (response.data.length > 0) {
-          const firstCitizen = response.data[0];
-          this.columns = Object.keys(firstCitizen).map((key) => ({
+          const firstCompany = response.data[0];
+          this.columns = Object.keys(firstCompany).map((key) => ({
             label: key.replace(/_/g, " ").toUpperCase(),
             field: key,
             sortable: true,
@@ -76,7 +76,7 @@ export default {
           }));
         }
 
-        this.citizens = response.data;
+        this.companies = response.data;
       } catch (error) {
         console.error(error);
       }
@@ -84,8 +84,8 @@ export default {
     toggleModal() {
       this.showModal = !this.showModal;
     },
-    handleCitizenAdded(citizen) {
-      this.citizens.push(citizen);
+    handleCompanyAdded(company) {
+      this.companies.push(company);
     },
   },
 };

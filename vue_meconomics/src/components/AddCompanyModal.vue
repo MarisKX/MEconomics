@@ -2,7 +2,7 @@
   <div v-if="isVisible" class="modal">
     <div class="modal-content">
       <span class="close-button" @click="closeModal">x</span>
-      <h3>Add New Citizen</h3>
+      <h3>Add New Company</h3>
       <form @submit.prevent="addCitizen">
         <div>
           <label><span class="required">*</span>First Name:</label>
@@ -92,7 +92,6 @@ export default {
       this.$emit("close");
     },
     addCitizen() {
-      // Post the new citizen to the API, then emit an event to the parent component to inform it
       axios
         .post(
           "https://meconomics.com:8000/api/citizen/citizens/",

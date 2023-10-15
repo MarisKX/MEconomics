@@ -8,6 +8,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./assets/css/global.css";
 import "./assets/css/colors.css";
+import "./assets/css/formstyles.css";
 import Cookies from "js-cookie";
 
 axios.defaults.withCredentials = true;
