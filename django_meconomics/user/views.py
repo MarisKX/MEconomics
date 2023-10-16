@@ -27,7 +27,6 @@ from user.serializers import (
 from core.custom_functions.today import today
 
 
-
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system"""
     serializer_class = UserSerializer
