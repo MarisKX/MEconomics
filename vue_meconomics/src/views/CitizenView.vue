@@ -1,6 +1,9 @@
 <template>
   <div class="citizens">
     <TopNav />
+    <hr class="top-data-seperator" />
+    <DataRow />
+    <hr class="top-data-seperator" />
     <div class="main">
       <div
         class="add-sign"
@@ -28,6 +31,7 @@
 <script>
 import axios from "axios";
 import TopNav from "../components/TopNav.vue";
+import DataRow from "../components/DataRow.vue";
 import AddCitizenModal from "../components/AddCitizenModal.vue";
 import TableView from "../components/TableView.vue";
 export default {
@@ -36,6 +40,7 @@ export default {
     TopNav,
     AddCitizenModal,
     TableView,
+    DataRow,
   },
   data() {
     return {
@@ -47,7 +52,7 @@ export default {
   },
   computed: {
     visibleColumns() {
-      return this.columns.slice(1);
+      return this.columns.slice(2);
     },
   },
   mounted() {

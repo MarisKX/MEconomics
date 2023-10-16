@@ -51,7 +51,15 @@
       <tbody ref="tbodyElement">
         <tr v-for="item in filteredItems" :key="item.id">
           <td v-for="(column, colIndex) in visibleColumns" :key="colIndex">
+            <div v-if="typeof item[column.field] === 'boolean'">
+              <!-- The data is a boolean, so we display a checkmark or an 'x' based on the value -->
+              <span v-if="item[column.field]" class="icon-checkmark">✔</span>
+              <!-- true -->
+              <span v-else class="icon-xmark">✖</span>
+              <!-- false -->
+            </div>
             <router-link
+              v-else
               :to="{
                 name: detailsRouteName,
                 params: { id: item.id },

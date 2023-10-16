@@ -1,35 +1,111 @@
 <template>
-  <div v-if="isVisible" class="modal">
+  <div v-if="isVisible" class="modal" @click="closeModalOnBackdrop">
     <div class="modal-content">
-      <span class="close-button" @click="closeModal">x</span>
+      <i
+        class="fa-duotone fa-square-xmark fa-xl close-button"
+        @click="closeModal"
+        style="
+          --fa-primary-color: #fafafa;
+          --fa-secondary-color: #b30000;
+          --fa-secondary-opacity: 1;
+        "
+      ></i>
       <h3>Add New Company</h3>
-      <form @submit.prevent="addCitizen">
+      <form @submit.prevent="addCompany">
         <div>
-          <label><span class="required">*</span>First Name:</label>
+          <label><span class="required">*</span>Company Name:</label>
           <input
             type="text"
-            id="first_name_display"
-            v-model="newCitizen.first_name"
-            placeholder="First Name (Names)"
+            id="name"
+            v-model="newCompany.name"
+            placeholder="Name of the Company"
             required
           />
         </div>
         <div>
-          <label><span class="required">*</span>Last Name:</label>
+          <label for="established">Established Date:</label>
           <input
-            type="text"
-            id="last_name_display"
-            v-model="newCitizen.last_name"
-            placeholder="Last Name"
+            type="date"
+            id="established"
+            v-model="newCompany.established"
             required
           />
+        </div>
+        <div>
+          <label><span class="required">*</span>Invoice Prefix:</label>
+          <input
+            type="text"
+            id="invoice_prefix"
+            v-model="newCompany.invoice_prefix"
+            placeholder="Letters to use in front of invoice/workorder"
+            required
+          />
+        </div>
+        <div class="select-wrapper">
+          <label>Owner Type:</label>
+          <select v-model="newCompany.owner_type" required>
+            <option disabled value="">Please select one</option>
+            <option value="0">Private</option>
+            <option value="1">Company</option>
+            <option value="2">Government Institution</option>
+          </select>
+          <i class="fas fa-chevron-down select-icon"></i>
+        </div>
+        <div class="select-wrapper" v-if="newCompany.owner_type === '1'">
+          <label>Owner Company:</label>
+          <select v-model="newCompany.owner_com" required>
+            <option disabled value="">Please select one</option>
+            <option
+              v-for="company in companies"
+              :key="company.id"
+              :value="company.id"
+            >
+              {{ company.name }} - {{ company.registration_number }}
+            </option>
+          </select>
+          <i class="fas fa-chevron-down select-icon"></i>
+        </div>
+        <div class="select-wrapper" v-if="newCompany.owner_type === '0'">
+          <label>Owner Citizen:</label>
+          <select v-model="newCompany.owner_pp" required>
+            <option disabled value="">Please select one</option>
+            <option
+              v-for="citizen in citizens"
+              :key="citizen.id"
+              :value="citizen.id"
+            >
+              {{ citizen.full_name }} - {{ citizen.bsn_number }}
+            </option>
+          </select>
+          <i class="fas fa-chevron-down select-icon"></i>
+        </div>
+        <div class="checkbox-out mt-3" @click="toggleWarehouse">
+          <i
+            v-if="newCompany.warehouse"
+            class="fa-duotone fa-square-check fa-xl"
+            style="
+              --fa-primary-color: white;
+              --fa-secondary-color: #3e5c20;
+              --fa-secondary-opacity: 1;
+            "
+          ></i>
+          <i
+            v-else
+            class="fa-duotone fa-square-xmark fa-xl"
+            style="
+              --fa-primary-color: #fafafa;
+              --fa-secondary-color: #b30000;
+              --fa-secondary-opacity: 1;
+            "
+          ></i>
+          <label>Warehouse</label>
         </div>
         <div>
           <label>Street Adress 1:</label>
           <input
             type="text"
             id="street_adress_1"
-            v-model="newCitizen.street_adress_1"
+            v-model="newCompany.street_adress_1"
             placeholder="House Number, Appartment Number etc."
           />
         </div>
@@ -38,7 +114,7 @@
           <input
             type="text"
             id="street_adress_2"
-            v-model="newCitizen.street_adress_2"
+            v-model="newCompany.street_adress_2"
             placeholder="Street, Road, Name"
           />
         </div>
@@ -47,7 +123,7 @@
           <input
             type="text"
             id="city"
-            v-model="newCitizen.city"
+            v-model="newCompany.city"
             placeholder="City, Town"
           />
         </div>
@@ -56,7 +132,7 @@
           <input
             type="text"
             id="post_code"
-            v-model="newCitizen.post_code"
+            v-model="newCompany.post_code"
             placeholder="Postal Code / Index"
           />
         </div>
@@ -65,7 +141,7 @@
           <input
             type="text"
             id="country"
-            v-model="newCitizen.country"
+            v-model="newCompany.country"
             placeholder="Country"
           />
         </div>
@@ -78,24 +154,72 @@
 <script>
 import axios from "axios";
 export default {
-  props: ["isVisible"],
+  components: {},
+  props: ["isVisible", "companies"],
   data() {
     return {
-      newCitizen: {
-        first_name: "",
-        last_name: "",
+      newCompany: {
+        name: "",
+        invoice_prefix: "",
+        owner_type: "",
+        warehouse: "true",
+        street_adress_1: "",
+        street_adress_2: "",
+        city: "",
+        post_code: "",
+        country: "",
       },
+      citizens: [],
     };
   },
+  created() {
+    this.fetchCitizens();
+    this.newCompany.established = this.dateToday;
+  },
+  computed: {
+    formattedDate() {
+      let dateObj = new Date(this.dateToday);
+      let options = { year: "numeric", month: "short", day: "numeric" };
+      return dateObj.toLocaleDateString("en-US", options);
+    },
+    dateToday() {
+      const dateToday = this.$store.state.dateToday;
+      return dateToday;
+    },
+  },
   methods: {
+    resetForm() {
+      this.newCompany = {
+        name: "",
+        established: this.dateToday,
+        invoice_prefix: "",
+        owner_type: "",
+        warehouse: true,
+        street_adress_1: "",
+        street_adress_2: "",
+        city: "",
+        post_code: "",
+        country: "",
+      };
+    },
+    closeModalOnBackdrop(event) {
+      if (event.target === event.currentTarget) {
+        this.resetForm();
+        this.$emit("close");
+      }
+    },
     closeModal() {
+      this.resetForm();
       this.$emit("close");
     },
-    addCitizen() {
+    toggleWarehouse() {
+      this.newCompany.warehouse = !this.newCompany.warehouse;
+    },
+    addCompany() {
       axios
         .post(
-          "https://meconomics.com:8000/api/citizen/citizens/",
-          this.newCitizen,
+          "https://meconomics.com:8000/api/company/companies/",
+          this.newCompany,
           {
             headers: {
               "X-CSRFToken": this.csrfToken,
@@ -103,13 +227,42 @@ export default {
           }
         )
         .then((response) => {
-          this.$emit("citizenAdded", response.data);
+          this.$emit("companyAdded", response.data);
+          this.resetForm();
           this.closeModal();
         })
         .catch((error) => {
           console.error(error);
         });
     },
+    async fetchCitizens() {
+      try {
+        const response = await axios.get(
+          "https://meconomics.com:8000/api/citizen/citizens/",
+          {
+            headers: {
+              "X-CSRFToken": this.csrfToken,
+            },
+          }
+        );
+        this.citizens = response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 };
 </script>
+
+<style>
+.checkbox-out {
+  height: 25px;
+  width: 25px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.checkbox-out label {
+  margin-left: 15px;
+}
+</style>

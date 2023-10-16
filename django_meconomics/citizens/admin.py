@@ -10,8 +10,7 @@ from citizens.models import Citizen
 class CitizenAdmin(admin.ModelAdmin):
     readonly_fields = (
         'name',
-        'first_name_low',
-        'last_name_low',
+        'full_name',
         'bsn_number',
         'id',
     )

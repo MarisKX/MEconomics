@@ -1,6 +1,7 @@
 """
 Views for the user API
 """
+# Django/DRF imports
 from rest_framework import (
     generics,
     authentication,
@@ -15,12 +16,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView, View
 from django.http import JsonResponse
 from django.middleware.csrf import get_token as get_csrf_token
-
+# Model imports
+from core.models import User
+# Serializer imports
 from user.serializers import (
     UserSerializer,
     AuthTokenSerializer,
 )
-from core.models import User
+# Custom imports
+from core.custom_functions.today import today
+
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -102,15 +107,18 @@ class CheckAuth(APIView):
             token_obj = Token.objects.get(key=token_key)
             user = token_obj.user
             username = user.email
-
-            # Your existing logic here...
+            current_date = today()
 
         except Token.DoesNotExist:
             return JsonResponse(
                 {"authenticated": False, "username": None},
                 status=status.HTTP_401_UNAUTHORIZED)
 
-        return JsonResponse({"authenticated": True, "username": username})
+        return JsonResponse({
+            "authenticated": True,
+            "username": username,
+            "dateToday": current_date,
+        })
 
 
 class LogoutView(View):

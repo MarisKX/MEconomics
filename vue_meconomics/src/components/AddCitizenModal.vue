@@ -1,14 +1,22 @@
 <template>
-  <div v-if="isVisible" class="modal">
+  <div v-if="isVisible" class="modal" @click="closeModalOnBackdrop">
     <div class="modal-content">
-      <span class="close-button" @click="closeModal">x</span>
+      <i
+        class="fa-duotone fa-square-xmark fa-xl close-button"
+        @click="closeModal"
+        style="
+          --fa-primary-color: #fafafa;
+          --fa-secondary-color: #b30000;
+          --fa-secondary-opacity: 1;
+        "
+      ></i>
       <h3>Add New Citizen</h3>
       <form @submit.prevent="addCitizen">
         <div>
           <label><span class="required">*</span>First Name:</label>
           <input
             type="text"
-            id="first_name_display"
+            id="first_name"
             v-model="newCitizen.first_name"
             placeholder="First Name (Names)"
             required
@@ -18,7 +26,7 @@
           <label><span class="required">*</span>Last Name:</label>
           <input
             type="text"
-            id="last_name_display"
+            id="last_name"
             v-model="newCitizen.last_name"
             placeholder="Last Name"
             required
@@ -84,15 +92,37 @@ export default {
       newCitizen: {
         first_name: "",
         last_name: "",
+        street_adress_1: "",
+        street_adress_2: "",
+        city: "",
+        post_code: "",
+        country: "",
       },
     };
   },
   methods: {
+    resetForm() {
+      this.newCitizen = {
+        first_name: "",
+        last_name: "",
+        street_adress_1: "",
+        street_adress_2: "",
+        city: "",
+        post_code: "",
+        country: "",
+      };
+    },
+    closeModalOnBackdrop(event) {
+      if (event.target === event.currentTarget) {
+        this.resetForm();
+        this.$emit("close");
+      }
+    },
     closeModal() {
+      this.resetForm();
       this.$emit("close");
     },
     addCitizen() {
-      // Post the new citizen to the API, then emit an event to the parent component to inform it
       axios
         .post(
           "https://meconomics.com:8000/api/citizen/citizens/",

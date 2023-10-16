@@ -16,25 +16,14 @@ class Citizen(models.Model):
         null=True,
         editable=False
     )
-    first_name_low = models.CharField(
-        max_length=254,
-        blank=True,
-        null=True,
-        editable=False
-    )
+    full_name = models.CharField(max_length=254)
     first_name = models.CharField(max_length=254)
-    last_name_low = models.CharField(
-        max_length=254,
-        blank=True,
-        null=True,
-        editable=False
-    )
     last_name = models.CharField(max_length=254)
     bsn_number = models.PositiveIntegerField(
         blank=True,
         unique=True,
         null=True,
-        editable=False  # Prevent manual editing
+        editable=False
     )
     street_adress_1 = models.IntegerField(blank=True, null=True)
     street_adress_2 = models.CharField(max_length=100, blank=True)
@@ -62,9 +51,10 @@ class Citizen(models.Model):
             self.bsn_number = int(f"{year}{citizen_count:04d}")
 
         # Format other fields if needed (e.g., names)
-        self.first_name_low = remove_accents(
+        first_name_low = remove_accents(
             self.first_name.replace(" ", "_")).lower()
-        self.last_name_low = remove_accents(
+        last_name_low = remove_accents(
             self.last_name.replace(" ", "_")).lower()
-        self.name = f"{self.first_name_low}_{self.last_name_low}"
+        self.name = f"{first_name_low}_{last_name_low}"
+        self.full_name = f"{self.first_name} {self.last_name}"
         super().save(*args, **kwargs)

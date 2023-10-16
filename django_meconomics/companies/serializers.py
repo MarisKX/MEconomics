@@ -30,6 +30,7 @@ class CompanySerializer(serializers.ModelSerializer):
             'registration_number',
             'established',
             'invoice_prefix',
+            'warehouse',
             'owner_type_display',
             'owner_type_choice_field',
             'owner_name',
@@ -40,7 +41,7 @@ class CompanySerializer(serializers.ModelSerializer):
         Return the name of the owner, either from owner_pp or owner_com.
         """
         if obj.owner_pp:
-            return obj.owner_pp.name
+            return obj.owner_pp.full_name
         elif obj.owner_com:
             return obj.owner_com.name
         return None
@@ -76,7 +77,6 @@ class CompanyDetailSerializer(CompanySerializer):
             'owner_pp',
             'owner_com',
             'name_low',
-            'warehouse',
             'manufacturer_code',
             'street_adress_1',
             'street_adress_2',

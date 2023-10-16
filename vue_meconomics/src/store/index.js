@@ -13,6 +13,9 @@ export default createStore({
     setUserEmail(state, value) {
       state.userEmail = value;
     },
+    setDate(state, value) {
+      state.dateToday = value;
+    },
   },
   actions: {
     async checkAuthentication({ commit }) {
@@ -27,6 +30,8 @@ export default createStore({
         if (response.data.authenticated) {
           commit("setIsAuthenticated", true);
           commit("setUserEmail", response.data.username);
+          commit("setDate", response.data.dateToday);
+          console.log(response.data.dateToday);
         } else {
           commit("setIsAuthenticated", false);
         }

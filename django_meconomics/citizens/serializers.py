@@ -14,6 +14,7 @@ class CitizenSerializer(serializers.ModelSerializer):
         model = Citizen
         fields = [
             'id',
+            'full_name',
             'first_name',
             'last_name',
             'bsn_number',
@@ -42,6 +43,4 @@ class CitizenDetailSerializer(CitizenSerializer):
     class Meta(CitizenSerializer.Meta):
         fields = CitizenSerializer.Meta.fields + [
             'name',
-            'first_name_low',
-            'last_name_low',
             ]

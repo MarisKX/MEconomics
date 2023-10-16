@@ -21,12 +21,12 @@ class CompanyViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
-        """Return the srializer class for citizen"""
+        """Return the srializer class for company"""
         if self.action == 'list':
             return serializers.CompanySerializer
 
         return self.serializer_class
 
     def perform_create(self, serializer):
-        """Create a new citizen"""
+        """Create a new company"""
         serializer.save()

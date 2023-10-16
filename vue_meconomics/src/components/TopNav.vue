@@ -1,5 +1,5 @@
 <template>
-  <div class="container d-flex align-items-center">
+  <div class="container d-flex align-items-center py-2 my-2">
     <div class="row w-100">
       <div
         class="col-12 col-lg-4 my-auto py-1 py-lg-0 text-center text-lg-left"
@@ -32,7 +32,6 @@
                 >All Invoices</router-link
               >
               <div class="dropdown-divider"></div>
-              <!-- Add more dropdown items as needed -->
             </div>
           </div>
           <div class="dropdown mx-2">
@@ -64,7 +63,7 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              Citizens
+              Companies
             </button>
             <div class="dropdown-menu" aria-labelledby="companiesDropdown">
               <router-link to="/" class="dropdown-item"

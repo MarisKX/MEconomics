@@ -10,12 +10,13 @@ label {
   color: #aaa;
   display: inline-block;
   margin: 25px 0 15px;
-  font-size: 0.6em;
+  font-size: 0.8em;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: bold;
 }
-input {
+input,
+select {
   display: block;
   padding: 10px 6px;
   width: 100%;
@@ -23,6 +24,38 @@ input {
   border: none;
   border-bottom: 1px solid #ddd;
   color: #555;
+  background-color: white; /* Optional: for consistent background */
+  -webkit-appearance: none; /* Removes default styling for select element on some browsers */
+  -moz-appearance: none; /* Removes default styling for the select element in Firefox */
+  appearance: none; /* Standard property to remove default styling */
+}
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.select-wrapper select {
+  display: block;
+  width: 100%;
+  padding: 10px 6px;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  color: #555;
+  background-color: white;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 30px; /* Make room for the icon */
+}
+
+.select-icon {
+  position: absolute;
+  right: 10px; /* Position icon from the right edge of the wrapper */
+  top: 76%;
+  transform: translateY(-50%); /* Center vertically */
+  pointer-events: none; /* Clicks pass through to the select element */
+  color: #aaa; /* Color of icon, match with label or input color */
 }
 input[type="checkbox"] {
   display: inline-block;
@@ -51,4 +84,8 @@ input[type="checkbox"] {
 }
 input::placeholder {
   color: #cecece;
+}
+
+.close-button {
+  margin-top: 12px;
 }

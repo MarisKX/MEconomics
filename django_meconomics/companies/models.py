@@ -44,7 +44,7 @@ class Company(models.Model):
     established = models.DateField(auto_now_add=False)
     invoice_prefix = models.CharField(max_length=2, blank=False, unique=True)
     manufacturer_code = models.IntegerField(default=0, blank=True)
-    street_adress_1 = models.IntegerField(default=0, blank=True)
+    street_adress_1 = models.IntegerField(default=0, blank=True, null=True)
     street_adress_2 = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
     post_code = models.CharField(max_length=6, blank=True)

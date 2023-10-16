@@ -1,6 +1,9 @@
 <template>
   <div class="companies">
     <TopNav />
+    <hr class="top-data-seperator" />
+    <DataRow />
+    <hr class="top-data-seperator" />
     <div class="main">
       <div
         class="add-sign"
@@ -14,6 +17,7 @@
         :isVisible="showModal"
         @close="toggleModal"
         @companyAdded="handleCompanyAdded"
+        :companies="companies"
       ></AddCompanyModal>
       <div v-if="showTooltip" class="tooltip">Add New Company</div>
       <TableView
@@ -28,6 +32,7 @@
 <script>
 import axios from "axios";
 import TopNav from "../components/TopNav.vue";
+import DataRow from "../components/DataRow.vue";
 import AddCompanyModal from "../components/AddCompanyModal.vue";
 import TableView from "../components/TableView.vue";
 export default {
@@ -36,6 +41,7 @@ export default {
     TopNav,
     AddCompanyModal,
     TableView,
+    DataRow,
   },
   data() {
     return {
