@@ -48,6 +48,7 @@
             id="street_adress_2"
             v-model="newCitizen.street_adress_2"
             placeholder="Street, Road, Name"
+            required
           />
         </div>
         <div>
@@ -57,6 +58,7 @@
             id="city"
             v-model="newCitizen.city"
             placeholder="City, Town"
+            required
           />
         </div>
         <div>
@@ -66,6 +68,7 @@
             id="post_code"
             v-model="newCitizen.post_code"
             placeholder="Postal Code / Index"
+            required
           />
         </div>
         <div>
@@ -75,6 +78,7 @@
             id="country"
             v-model="newCitizen.country"
             placeholder="Country"
+            required
           />
         </div>
         <button class="submit-modal-btn" type="submit">Save</button>

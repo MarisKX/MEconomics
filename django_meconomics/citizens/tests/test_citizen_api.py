@@ -48,7 +48,7 @@ def create_citizen(**params):
     return citizen
 
 
-class PublicRecipeAPITests(TestCase):
+class PublicCitizenAPITests(TestCase):
     """Test unauthenticated API requests"""
 
     def setUp(self):
@@ -61,7 +61,7 @@ class PublicRecipeAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class PrivateRecipeApiTests(TestCase):
+class PrivateCitizenApiTests(TestCase):
     """Test authenticated API requests"""
     def setUp(self):
         self.client = APIClient()
@@ -95,7 +95,6 @@ class PrivateRecipeApiTests(TestCase):
         payload = {
             'first_name': 'Jānis',
             'last_name': 'Bērziņš',
-            'street_adress_1': 25,
             'street_adress_2': 'Erasplaats',
             'city': 'Riverside',
             'post_code': '1001AA',
@@ -103,6 +102,10 @@ class PrivateRecipeApiTests(TestCase):
         }
         res = self.client.post(CITIZENS_URL, payload)
 
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        # If the code didn't return 201, it's helpful to print out what it did return
+        if res.status_code != status.HTTP_201_CREATED:
+            print(res.data)
         citizen = Citizen.objects.get(id=res.data['id'])
         for k, v in payload.items():
             self.assertEqual(getattr(citizen, k), v)

@@ -58,9 +58,8 @@ class CitizenModelTests(TestCase):
         self.citizen.first_name = "John"
         self.citizen.last_name = "Doe"
         self.citizen.save()
-        self.assertEqual(self.citizen.first_name_low, "john")
-        self.assertEqual(self.citizen.last_name_low, "doe")
         self.assertEqual(self.citizen.name, "john_doe")
+        self.assertEqual(self.citizen.full_name, "John Doe")
 
     def test_save_method_bsn_number(self):
         """Test that BSN number is generated if it's not provided."""

@@ -16,7 +16,12 @@ class Citizen(models.Model):
         null=True,
         editable=False
     )
-    full_name = models.CharField(max_length=254)
+    full_name = models.CharField(
+        max_length=254,
+        blank=True,
+        null=True,
+        editable=False
+    )
     first_name = models.CharField(max_length=254)
     last_name = models.CharField(max_length=254)
     bsn_number = models.PositiveIntegerField(
@@ -28,7 +33,7 @@ class Citizen(models.Model):
     street_adress_1 = models.IntegerField(blank=True, null=True)
     street_adress_2 = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
-    post_code = models.CharField(max_length=6, blank=True)
+    post_code = models.CharField(max_length=7, blank=True)
     country = models.CharField(max_length=100, blank=True)
 
     def __str__(self):

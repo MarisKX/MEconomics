@@ -47,7 +47,7 @@ class Company(models.Model):
     street_adress_1 = models.IntegerField(default=0, blank=True, null=True)
     street_adress_2 = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
-    post_code = models.CharField(max_length=6, blank=True)
+    post_code = models.CharField(max_length=7, blank=True)
     country = models.CharField(max_length=100, blank=True)
     employee_count = models.IntegerField(blank=True, default=0)
     total_salaries_cost = models.DecimalField(
