@@ -88,7 +88,7 @@ class AppSettings(models.Model):
                 previous_settings.valid = False
                 previous_settings.save(update_fields=['valid'])
                 print(previous_settings.valid)
-            self.settings_number = f"" + str(
+            self.settings_number = str(
                 today().year) + str(
                     settings_count + 1).zfill(4)
         super().save(*args, **kwargs)

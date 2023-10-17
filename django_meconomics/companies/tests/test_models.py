@@ -6,6 +6,7 @@ from companies.models import Company, GovInstitution
 from citizens.models import Citizen
 
 
+# Company Tests
 class CompanyModelTests(TestCase):
 
     def setUp(self):
@@ -27,13 +28,6 @@ class CompanyModelTests(TestCase):
             owner_pp=self.citizen,
         )
 
-        self.gov_inst = GovInstitution(
-            name="General Government",
-            established="2023-01-01",
-            authority="Minecraft Kingdom"
-        )
-
-    # Company Tests
     def test_company_creation(self):
         """Test if a Comapany instance can be created."""
         self.company.save()
@@ -73,7 +67,17 @@ class CompanyModelTests(TestCase):
         with self.assertRaises(ValidationError):
             self.company.save()
 
-    # Government Institution Tests
+
+# Government Institution Tests
+class GovernmentInstitutionModelTests(TestCase):
+
+    def setUp(self):
+        self.gov_inst = GovInstitution(
+            name="General Government",
+            established="2023-01-01",
+            authority="Minecraft Kingdom"
+        )
+
     def test_gov_inst_creation(self):
         """Test if a Government Institution instance can be created."""
         self.gov_inst.save()
@@ -87,7 +91,8 @@ class CompanyModelTests(TestCase):
     def test_get_display_name(self):
         """Test the get_display_name method."""
         self.gov_inst.save()
-        self.assertEqual(self.gov_inst.get_display_name(), "General Government")
+        self.assertEqual(
+            self.gov_inst.get_display_name(), "General Government")
 
     def test_registration_number_generation(self):
         """Test that a registration number is generated on save."""

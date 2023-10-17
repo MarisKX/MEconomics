@@ -55,9 +55,9 @@ class CompanySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         if validated_data.get('owner_pp'):
-            validated_data['owner_type_low'] = '0'  # '0' corresponds to 'Private'
+            validated_data['owner_type_low'] = '0'
         elif validated_data.get('owner_com'):
-            validated_data['owner_type_low'] = '1'  # '1' corresponds to 'Company'
+            validated_data['owner_type_low'] = '1'
         return super().create(validated_data)
 
     def update(self, instance, validated_data):

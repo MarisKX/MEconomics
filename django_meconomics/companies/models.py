@@ -102,12 +102,12 @@ class Company(models.Model):
                 "company as its owner, but not both or none."
             )
 
-        if self.owner_pp and self.owner_type != '0':
+        if self.owner_pp and self.owner_type_low != '0':
             raise ValidationError(
                 "If a private person is selected as the owner, the "
                 "owner_type should be 'Private'."
             )
-        if self.owner_com and self.owner_type != '1':
+        if self.owner_com and self.owner_type_low != '1':
             raise ValidationError(
                 "If another company is selected as the owner, the "
                 "owner_type should be 'Company'."
