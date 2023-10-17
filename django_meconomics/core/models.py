@@ -57,7 +57,7 @@ class AppSettings(models.Model):
     settings_number = models.CharField(max_length=8)
     valid_from = models.DateField(auto_now_add=False)
     valid_till = models.DateField(auto_now_add=False)
-    acions_per_day = models.PositiveIntegerField(default=1)
+    actions_per_day = models.PositiveIntegerField(default=1)
     vsaoi_dn = models.DecimalField(
         max_digits=4, decimal_places=2, blank=False, null=False)
     iin_rate = models.DecimalField(
@@ -82,6 +82,7 @@ class AppSettings(models.Model):
         if it hasn't been set already.
         """
         if not self.settings_number:
+            self.valid = True
             settings_count = AppSettings.objects.all().count()
             if settings_count > 0:
                 previous_settings = AppSettings.objects.latest('valid_till')

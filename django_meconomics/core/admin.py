@@ -48,7 +48,7 @@ class AppSettingsAdmin(admin.ModelAdmin):
     readonly_fields = ('settings_number',)
     list_display = (
         'settings_number',
-        'acions_per_day',
+        'actions_per_day',
         'valid',
         'valid_from',
         'valid_till',
