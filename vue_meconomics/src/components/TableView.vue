@@ -37,7 +37,7 @@
                 </div>
                 <input
                   v-else
-                  class="search"
+                  class="search table-search"
                   v-model="column.search"
                   @input="filterData"
                   key="search-input"

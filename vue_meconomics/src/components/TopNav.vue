@@ -43,34 +43,17 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              Citizens
+              Persons
             </button>
             <div class="dropdown-menu" aria-labelledby="citizensDropdown">
-              <router-link to="/" class="dropdown-item"
-                >New Citizen</router-link
+              <router-link to="/companies" class="dropdown-item"
+                >Companies</router-link
               >
               <router-link to="/citizens" class="dropdown-item"
-                >All Citizens</router-link
+                >Citizens</router-link
               >
-            </div>
-          </div>
-          <div class="dropdown mx-2">
-            <button
-              class="btn btn-secondary bg-green dropdown-toggle"
-              type="button"
-              id="companiesDropdown"
-              data-bs-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Companies
-            </button>
-            <div class="dropdown-menu" aria-labelledby="companiesDropdown">
-              <router-link to="/" class="dropdown-item"
-                >New Company</router-link
-              >
-              <router-link to="/companies" class="dropdown-item"
-                >All Companies</router-link
+              <router-link to="/government" class="dropdown-item"
+                >Government</router-link
               >
             </div>
           </div>

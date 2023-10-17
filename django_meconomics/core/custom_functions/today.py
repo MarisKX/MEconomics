@@ -1,3 +1,7 @@
+# General Python imports
+from datetime import date
+
 def today():
-    today = "1800-01-01"
+    today = date(1800, 1, 1)
+    print(today)
     return today

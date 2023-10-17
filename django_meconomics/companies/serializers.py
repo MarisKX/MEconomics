@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company
+from .models import Company, GovInstitution
 
 
 owner_type_choice_field = serializers.ChoiceField(
@@ -19,7 +19,7 @@ class CompanySerializer(serializers.ModelSerializer):
     Serializer for listing companies.
     """
     owner_name = serializers.SerializerMethodField()
-    owner_type_display = serializers.SerializerMethodField()
+    owner_type = serializers.SerializerMethodField()
     owner_type_choice_field = owner_type_choice_field
 
     class Meta:
@@ -31,9 +31,10 @@ class CompanySerializer(serializers.ModelSerializer):
             'established',
             'invoice_prefix',
             'warehouse',
-            'owner_type_display',
+            'owner_type',
             'owner_type_choice_field',
             'owner_name',
+            'employee_count',
         ]
 
     def get_owner_name(self, obj):
@@ -46,17 +47,17 @@ class CompanySerializer(serializers.ModelSerializer):
             return obj.owner_com.name
         return None
 
-    def get_owner_type_display(self, obj):  # <-- This method
+    def get_owner_type(self, obj):
         """
         Return the human-readable version of the owner_type choice.
         """
-        return obj.get_owner_type_display()
+        return obj.get_owner_type_low_display()
 
     def create(self, validated_data):
         if validated_data.get('owner_pp'):
-            validated_data['owner_type'] = '0'  # '0' corresponds to 'Private'
+            validated_data['owner_type_low'] = '0'  # '0' corresponds to 'Private'
         elif validated_data.get('owner_com'):
-            validated_data['owner_type'] = '1'  # '1' corresponds to 'Company'
+            validated_data['owner_type_low'] = '1'  # '1' corresponds to 'Company'
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
@@ -83,7 +84,57 @@ class CompanyDetailSerializer(CompanySerializer):
             'city',
             'post_code',
             'country',
+            'total_salaries_cost',
+            'total_bruto_salaries',
+            'total_salary_vsaoi_dd',
+            'total_salary_vsaoi_dn',
+            'total_salary_iin',
+            'total_salary_netto',
+            'average_salary_brutto',
+        ]
+
+
+class GovInstitutionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing Government Institutions.
+    """
+    class Meta:
+        model = GovInstitution
+        fields = [
+            'id',
+            'name',
+            'registration_number',
+            'established',
+            'authority',
             'employee_count',
+        ]
+
+    def create(self, validated_data):
+        """Create and return a new citizen"""
+        return GovInstitution.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """Update and return a citizen"""
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
+class GovInstitutionDetailSerializer(GovInstitutionSerializer):
+    """
+    Serializer for displaying detailed information
+    about a Government Institution.
+    """
+    class Meta(GovInstitutionSerializer.Meta):
+        fields = GovInstitutionSerializer.Meta.fields + [
+            'id',
+            'name_low',
+            'street_adress_1',
+            'street_adress_2',
+            'city',
+            'post_code',
+            'country',
             'total_salaries_cost',
             'total_bruto_salaries',
             'total_salary_vsaoi_dd',

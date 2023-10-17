@@ -1,6 +1,8 @@
 <template>
   <div class="container d-flex align-items-center">
-    <div class="row w-100">{{ formattedDate }}</div>
+    <div class="row w-100">
+      <div class="col-12 col-xl-4">{{ formattedDate }}</div>
+    </div>
   </div>
 </template>
 
@@ -8,9 +10,10 @@
 export default {
   computed: {
     formattedDate() {
-      let dateObj = new Date(this.dateToday);
-      let options = { year: "numeric", month: "short", day: "numeric" };
-      return dateObj.toLocaleDateString("en-US", options);
+      const [day, month, year] = this.dateToday.split("-");
+      let dateObj = new Date(year, month - 1, day);
+      let options = { year: "numeric", month: "long", day: "2-digit" };
+      return dateObj.toLocaleDateString("en-NL", options);
     },
     dateToday() {
       const dateToday = this.$store.state.dateToday;

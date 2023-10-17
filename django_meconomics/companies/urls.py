@@ -9,6 +9,7 @@ from companies import views
 
 router = DefaultRouter()
 router.register('companies', views.CompanyViewSet)
+router.register('governmentinstitutions', views.GovermentInstViewSet)
 
 app_name = 'companies'
 

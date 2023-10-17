@@ -3,6 +3,7 @@ import store from "@/store";
 import HomeView from "../views/HomeView.vue";
 import CitizenView from "../views/CitizenView.vue";
 import CompanyView from "../views/CompanyView.vue";
+import GovernmentView from "../views/GovernmentView.vue";
 
 const routes = [
   {
@@ -25,7 +26,7 @@ const routes = [
         /* webpackChunkName: "citizens" */ "../views/CitizenDetailsView.vue"
       ),
     meta: { requiresAuth: true },
-    props: true, // This line is important
+    props: true,
   },
   {
     path: "/companies",
@@ -41,7 +42,23 @@ const routes = [
         /* webpackChunkName: "citizens" */ "../views/CompanyDetailsView.vue"
       ),
     meta: { requiresAuth: true },
-    props: true, // This line is important
+    props: true,
+  },
+  {
+    path: "/government",
+    name: "government",
+    component: GovernmentView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/government-details/:id",
+    name: "government-details",
+    component: () =>
+      import(
+        /* webpackChunkName: "citizens" */ "../views/GovernmentDetailsView.vue"
+      ),
+    meta: { requiresAuth: true },
+    props: true,
   },
   {
     path: "/login",
@@ -57,16 +74,26 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = store.state.isAuthenticated;
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-  if (
-    to.matched.some((record) => record.meta.requiresAuth) &&
-    !isAuthenticated
-  ) {
-    next({ name: "login" });
-  } else {
+  if (!requiresAuth) {
     next();
+    return;
+  }
+
+  try {
+    await store.dispatch("checkAuthentication");
+    const isAuthenticated = store.state.isAuthenticated;
+
+    if (!isAuthenticated) {
+      next({ name: "login" });
+    } else {
+      next();
+    }
+  } catch (error) {
+    console.error("Error during route guard execution:", error);
+    next(false);
   }
 });
 

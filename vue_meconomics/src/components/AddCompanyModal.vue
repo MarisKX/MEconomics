@@ -174,24 +174,24 @@ export default {
   },
   created() {
     this.fetchCitizens();
-    this.newCompany.established = this.dateToday;
+    this.resetForm();
   },
   computed: {
-    formattedDate() {
-      let dateObj = new Date(this.dateToday);
-      let options = { year: "numeric", month: "short", day: "numeric" };
-      return dateObj.toLocaleDateString("en-US", options);
-    },
     dateToday() {
       const dateToday = this.$store.state.dateToday;
+      console.log(dateToday);
       return dateToday;
+    },
+    dateForInputField() {
+      const [year, month, day] = this.dateToday.split("-");
+      return `${day}-${month}-${year}`;
     },
   },
   methods: {
     resetForm() {
       this.newCompany = {
         name: "",
-        established: this.dateToday,
+        established: this.dateForInputField,
         invoice_prefix: "",
         owner_type: "",
         warehouse: true,

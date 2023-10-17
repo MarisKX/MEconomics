@@ -106,7 +106,7 @@ class CheckAuth(APIView):
             token_obj = Token.objects.get(key=token_key)
             user = token_obj.user
             username = user.email
-            current_date = today()
+            current_date = today().strftime("%d-%m-%Y")
 
         except Token.DoesNotExist:
             return JsonResponse(
