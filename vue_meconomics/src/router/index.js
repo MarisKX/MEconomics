@@ -4,6 +4,7 @@ import HomeView from "../views/HomeView.vue";
 import CitizenView from "../views/CitizenView.vue";
 import CompanyView from "../views/CompanyView.vue";
 import GovernmentView from "../views/GovernmentView.vue";
+import AppSettingsView from "../views/AppSettingsView.vue";
 
 const routes = [
   {
@@ -56,6 +57,22 @@ const routes = [
     component: () =>
       import(
         /* webpackChunkName: "citizens" */ "../views/GovernmentDetailsView.vue"
+      ),
+    meta: { requiresAuth: true },
+    props: true,
+  },
+  {
+    path: "/appsettings",
+    name: "appsettings",
+    component: AppSettingsView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/appsettings-details/:id",
+    name: "appsettings-details",
+    component: () =>
+      import(
+        /* webpackChunkName: "citizens" */ "../views/AppSettingsDetailsView.vue"
       ),
     meta: { requiresAuth: true },
     props: true,

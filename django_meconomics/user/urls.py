@@ -8,6 +8,7 @@ from user import views
 
 router = DefaultRouter()
 router.register('all-users', views.AllUsersView)
+router.register('app-settings', views.AppSettingsViewSet)
 
 app_name = 'user'
 

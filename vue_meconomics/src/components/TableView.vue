@@ -3,7 +3,31 @@
     <table>
       <thead>
         <tr>
-          <th v-for="(column, index) in visibleColumns" :key="index">
+          <th
+            @click="toggleSelectAll"
+            :class="{ 'icon-clickable': true }"
+            class="custom-checkbox"
+          >
+            <i
+              v-if="areAllItemsSelected"
+              class="fa-duotone fa-square-check"
+              style="
+                --fa-primary-color: #ffffff;
+                --fa-secondary-color: #75af4a;
+                --fa-secondary-opacity: 1;
+              "
+            ></i>
+            <i
+              v-else
+              class="fa-duotone fa-square-check"
+              style="--fa-primary-color: #ffffff; --fa-secondary-color: #ababab"
+            ></i>
+          </th>
+          <th
+            v-for="(column, index) in visibleColumns"
+            :key="index"
+            class="custom-th"
+          >
             <div class="header-content">
               <transition name="fade" mode="out-in">
                 <div
@@ -50,12 +74,40 @@
       </thead>
       <tbody ref="tbodyElement">
         <tr v-for="item in filteredItems" :key="item.id">
-          <td v-for="(column, colIndex) in visibleColumns" :key="colIndex">
+          <td
+            @click="toggleSelectItem(item)"
+            :class="{ 'icon-clickable': true }"
+            class="custom-checkbox"
+          >
+            <i
+              v-if="isItemSelected(item)"
+              class="fa-duotone fa-square-check"
+              style="
+                --fa-primary-color: #ffffff;
+                --fa-secondary-color: #75af4a;
+                --fa-secondary-opacity: 1;
+              "
+            ></i>
+            <i
+              v-else
+              class="fa-duotone fa-square-check"
+              style="--fa-primary-color: #ffffff; --fa-secondary-color: #ababab"
+            ></i>
+          </td>
+          <td
+            v-for="(column, colIndex) in visibleColumns"
+            :key="colIndex"
+            class="custom-td"
+          >
             <div v-if="typeof item[column.field] === 'boolean'">
               <!-- The data is a boolean, so we display a checkmark or an 'x' based on the value -->
-              <span v-if="item[column.field]" class="icon-checkmark">✔</span>
+              <span v-if="item[column.field]"
+                ><i class="fa-solid fa-check" style="color: #28b701"></i
+              ></span>
               <!-- true -->
-              <span v-else class="icon-xmark">✖</span>
+              <span v-else
+                ><i class="fa-solid fa-xmark" style="color: #ff0000"></i
+              ></span>
               <!-- false -->
             </div>
             <router-link
@@ -81,6 +133,7 @@ export default {
     return {
       filteredItems: [...this.items],
       activeSearchColumnIndex: null,
+      selectedItems: [],
     };
   },
   props: {
@@ -88,7 +141,14 @@ export default {
     items: Array,
     detailsRouteName: String,
   },
-  computed: {},
+  computed: {
+    areAllItemsSelected() {
+      return (
+        this.selectedItems.length === this.filteredItems.length &&
+        this.filteredItems.length > 0
+      );
+    },
+  },
   methods: {
     filterData() {
       const searchColumn = this.visibleColumns[this.activeSearchColumnIndex];
@@ -178,6 +238,26 @@ export default {
         this.deactivateSearch();
       }
     },
+    toggleSelectAll() {
+      if (this.areAllItemsSelected) {
+        this.selectedItems = [];
+      } else {
+        this.selectedItems = this.filteredItems.map((item) => item.id);
+      }
+    },
+    toggleSelectItem(item) {
+      const index = this.selectedItems.indexOf(item.id);
+      if (index > -1) {
+        // Item is already selected, so we remove it
+        this.selectedItems.splice(index, 1);
+      } else {
+        // Item is not selected, so we add it
+        this.selectedItems.push(item.id);
+      }
+    },
+    isItemSelected(item) {
+      return this.selectedItems.includes(item.id);
+    },
   },
   watch: {
     items(newItems) {
@@ -221,8 +301,8 @@ export default {
   align-items: center;
 }
 
-td,
-th {
+.custom-td,
+.custom-th {
   min-width: 150px;
   padding: 5px 5px;
 }
@@ -238,5 +318,9 @@ th {
 }
 input {
   width: 120px;
+}
+.custom-checkbox {
+  width: 25px;
+  cursor: pointer;
 }
 </style>

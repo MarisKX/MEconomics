@@ -14,14 +14,18 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.response import Response
 from rest_framework.views import APIView, View
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse
 from django.middleware.csrf import get_token as get_csrf_token
 # Model imports
-from core.models import User
+from core.models import User, AppSettings
 # Serializer imports
 from user.serializers import (
     UserSerializer,
     AuthTokenSerializer,
+    AppSettingsSerializer,
+    AppSettingsDetailSerializer,
 )
 # Custom imports
 from core.custom_functions.today import today
@@ -153,3 +157,27 @@ class AllUsersView(viewsets.ModelViewSet):
             queryset = queryset.filter(id=user_id)
 
         return queryset
+
+
+class AppSettingsViewSet(viewsets.ModelViewSet):
+    """View for manage App Settings"""
+    serializer_class = AppSettingsDetailSerializer
+    queryset = AppSettings.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        """Return the srializer class for company"""
+        if self.action == 'list':
+            return AppSettingsSerializer
+
+        return self.serializer_class
+
+    def get_queryset(self):
+        """Retrieve App Settings"""
+        queryset = self.queryset
+        return queryset.filter().order_by('-id')
+
+    def perform_create(self, serializer):
+        """Create a new company"""
+        serializer.save()

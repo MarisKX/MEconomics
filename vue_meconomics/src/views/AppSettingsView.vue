@@ -1,5 +1,5 @@
 <template>
-  <div class="government">
+  <div class="citizens">
     <TopNav />
     <hr class="top-data-seperator" />
     <DataRow />
@@ -13,19 +13,16 @@
       >
         <i class="fas fa-plus"></i>
       </div>
-      <AddGovernmentModal
+      <AddAppSettingsModal
         :isVisible="showModal"
         @close="toggleModal"
-        @governmentInstitutionAdded="handleGovernmentInstitutionAdded"
-        :governmentInstitutions="governmentInstitutions"
-      ></AddGovernmentModal>
-      <div v-if="showTooltip" class="tooltip">
-        Add New Government Institutution
-      </div>
+        @settingsAdded="handleAppSettingsAdded"
+      ></AddAppSettingsModal>
+      <div v-if="showTooltip" class="tooltip">Add New App Settings</div>
       <TableView
         :visibleColumns="visibleColumns"
-        :items="governmentInstitutions"
-        :detailsRouteName="'government-details'"
+        :items="appSettings"
+        :detailsRouteName="'appsettings-details'"
       />
     </div>
   </div>
@@ -35,20 +32,20 @@
 import axios from "axios";
 import TopNav from "../components/TopNav.vue";
 import DataRow from "../components/DataRow.vue";
-import AddGovernmentModal from "../components/AddGovernmentModal.vue";
+import AddAppSettingsModal from "../components/AddAppSettingsModal.vue";
 import TableView from "../components/TableView.vue";
 export default {
-  name: "GovernmentView",
+  name: "AppSettingsView",
   components: {
     TopNav,
-    AddGovernmentModal,
+    AddAppSettingsModal,
     TableView,
     DataRow,
   },
   data() {
     return {
       columns: [],
-      governmentInstitutions: [],
+      appSettings: [],
       showTooltip: false,
       showModal: false,
     };
@@ -65,7 +62,7 @@ export default {
     async fetchData() {
       try {
         const response = await axios.get(
-          "https://meconomics.com:8000/api/company/governmentinstitutions/",
+          "https://meconomics.com:8000/api/user/app-settings/",
           {
             headers: {
               "X-CSRFToken": this.csrfToken,
@@ -74,8 +71,8 @@ export default {
         );
 
         if (response.data.length > 0) {
-          const firstGovernmentInstitution = response.data[0];
-          this.columns = Object.keys(firstGovernmentInstitution).map((key) => ({
+          const firstAppSettings = response.data[0];
+          this.columns = Object.keys(firstAppSettings).map((key) => ({
             label: key.replace(/_/g, " ").toUpperCase(),
             field: key,
             sortable: true,
@@ -84,7 +81,7 @@ export default {
           }));
         }
 
-        this.governmentInstitutions = response.data;
+        this.appSettings = response.data;
       } catch (error) {
         console.error(error);
       }
@@ -92,16 +89,10 @@ export default {
     toggleModal() {
       this.showModal = !this.showModal;
     },
-    async handleGovernmentInstitutionAdded(governmentInstitution) {
-      this.governmentInstitutions.unshift(governmentInstitution);
+    async handleAppSettingsAdded(appSetting) {
+      this.appSettings.unshift(appSetting);
       await this.fetchData();
     },
   },
 };
 </script>
-
-<style scoped>
-.tooltip {
-  left: 240px;
-}
-</style>

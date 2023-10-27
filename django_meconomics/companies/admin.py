@@ -4,10 +4,29 @@ from django.contrib import admin
 from companies.models import (
     Company,
     GovInstitution,
+    CompanyEmployees,
 )
 
 
+class CompanyEmployeesAdmin(admin.TabularInline):
+    model = CompanyEmployees
+    readonly_fields = (
+        'salary_vsaoi_dd',
+        'salary_vsaoi_dn',
+        'salary_iin',
+        'salary_netto',
+        )
+    list_display = (
+        'company',
+        'name',
+        'salary_brutto'
+    )
+
+    ordering = ('name',)
+
+
 class CompanyAdmin(admin.ModelAdmin):
+    inlines = (CompanyEmployeesAdmin, )
     list_display = (
         'name',
         'warehouse',

@@ -1,17 +1,25 @@
 """
 Tests for the user API
 """
+# General Imports
+from datetime import timedelta
+# Django Imports
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-
+from django.utils import timezone
+# DRF imports
 from rest_framework.test import APIClient
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+# Custom imports
+from core.custom_functions.today import today
 
 
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:me')
+CHECK_AUTH_URL = reverse('user:check-auth')
 
 
 def create_user(**params):
@@ -148,3 +156,60 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(self.user.name, payload['name'])
         self.assertTrue(self.user.check_password(payload['password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+
+class CheckAuthTests(TestCase):
+    """Test for auth requests"""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            email='testuser@example.com',
+            password='testpass'
+        )
+        self.token, _ = Token.objects.get_or_create(user=self.user)
+
+    def test_check_auth_with_header_token(self):
+        """Test to check if auth is possible with header token"""
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        current_date = today().strftime("%d-%m-%Y")
+        response = self.client.get(CHECK_AUTH_URL)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            "authenticated": True,
+            "username": self.user.email,
+            "dateToday": current_date,
+        })
+
+    def test_check_auth_with_cookie_token(self):
+        """Test to check if auth is possible with cookie token"""
+        self.client.cookies['auth_token'] = self.token.key
+        response = self.client.get(CHECK_AUTH_URL)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            "authenticated": True,
+            "username": self.user.email,
+            "dateToday": "01-01-1800"
+        })
+
+    def test_unauthenticated_request(self):
+        """Test to check if unauthorized requests is possible"""
+        response = self.client.get(CHECK_AUTH_URL)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), {
+            'detail': 'Authentication credentials were not provided.'
+        })
+
+    def test_expired_token(self):
+        """Test for expired token sent by cookies"""
+        old_time = timezone.now() - timedelta(minutes=20)
+        self.token.created = old_time
+        self.token.save()
+
+        # Try to access a view with the expired token
+        self.client.cookies['auth_token'] = self.token.key
+        response = self.client.get(CHECK_AUTH_URL)
+
+        # Check if the response is as expected
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), {"error": "Token expired"})

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company, GovInstitution
+from .models import Company, GovInstitution, CompanyEmployees
 
 
 owner_type_choice_field = serializers.ChoiceField(
@@ -12,6 +12,15 @@ owner_type_choice_field = serializers.ChoiceField(
     required=False,
     help_text="Choose the type of owner.",
 )
+
+
+class DisplayNameField(serializers.Field):
+    """A custom field to use the `get_display_name`
+    method for the name representation.
+    """
+
+    def to_representation(self, value):
+        return value.get_display_name()
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -68,10 +77,40 @@ class CompanySerializer(serializers.ModelSerializer):
         return instance
 
 
+class CompanyEmployeesSerializer(serializers.ModelSerializer):
+    """
+    Serializer for displaying detailed information
+    about a company employees
+    """
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CompanyEmployees
+        fields = [
+            'company',
+            'name',
+            'role',
+            'salary_brutto',
+            'salary_vsaoi_dd',
+            'salary_vsaoi_dn',
+            'salary_iin',
+            'salary_netto',
+        ]
+
+    def get_name(self, obj):
+        return obj.name.full_name
+
+
 class CompanyDetailSerializer(CompanySerializer):
     """
     Serializer for displaying detailed information about a company.
     """
+    employees = CompanyEmployeesSerializer(
+        many=True,
+        read_only=True,
+        source='employer'
+    )
+
     class Meta(CompanySerializer.Meta):
         fields = CompanySerializer.Meta.fields + [
             'id',
@@ -91,6 +130,7 @@ class CompanyDetailSerializer(CompanySerializer):
             'total_salary_iin',
             'total_salary_netto',
             'average_salary_brutto',
+            'employees',
         ]
 
 
@@ -110,7 +150,7 @@ class GovInstitutionSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        """Create and return a new citizen"""
+        """Create and return a new Government inst"""
         return GovInstitution.objects.create(**validated_data)
 
     def update(self, instance, validated_data):

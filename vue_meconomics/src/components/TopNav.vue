@@ -38,14 +38,14 @@
             <button
               class="btn btn-secondary bg-green dropdown-toggle"
               type="button"
-              id="citizensDropdown"
+              id="personsDropdown"
               data-bs-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
             >
               Persons
             </button>
-            <div class="dropdown-menu" aria-labelledby="citizensDropdown">
+            <div class="dropdown-menu" aria-labelledby="personsDropdown">
               <router-link to="/companies" class="dropdown-item"
                 >Companies</router-link
               >
@@ -54,6 +54,23 @@
               >
               <router-link to="/government" class="dropdown-item"
                 >Government</router-link
+              >
+            </div>
+          </div>
+          <div class="dropdown mx-2">
+            <button
+              class="btn btn-secondary bg-green dropdown-toggle"
+              type="button"
+              id="managementDropdown"
+              data-bs-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Management
+            </button>
+            <div class="dropdown-menu" aria-labelledby="managementDropdown">
+              <router-link to="/appsettings" class="dropdown-item"
+                >App Settings</router-link
               >
             </div>
           </div>

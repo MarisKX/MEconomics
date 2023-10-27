@@ -54,7 +54,7 @@ class AppSettings(models.Model):
             models.Index(fields=["settings_number"]),
         ]
 
-    settings_number = models.CharField(max_length=8)
+    settings_number = models.CharField(max_length=8, blank=True, null=True)
     valid_from = models.DateField(auto_now_add=False)
     valid_till = models.DateField(auto_now_add=False)
     actions_per_day = models.PositiveIntegerField(default=1)
