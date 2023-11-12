@@ -391,7 +391,10 @@ class Warehouse(models.Model):
         """
         if self.warehouse_code == "0":
             warehouse_count = Warehouse.objects.filter(company=self.company).count() or 0  # noqa
-            warehouse_owner = get_object_or_404(Company, name=self.company.name)
+            warehouse_owner = get_object_or_404(
+                Company,
+                name=self.company.name
+            )
             self.warehouse_code = (
                 str(warehouse_owner.manufacturer_code) + str(warehouse_count + 1).zfill(2)  # noqa
             )
