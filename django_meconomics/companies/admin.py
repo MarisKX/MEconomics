@@ -5,6 +5,8 @@ from companies.models import (
     Company,
     GovInstitution,
     CompanyEmployees,
+    GovInstEmployees,
+    Warehouse,
 )
 
 
@@ -51,7 +53,25 @@ class CompanyAdmin(admin.ModelAdmin):
     )
 
 
+class GovInstEmployeesAdmin(admin.TabularInline):
+    model = GovInstEmployees
+    readonly_fields = (
+        'salary_vsaoi_dd',
+        'salary_vsaoi_dn',
+        'salary_iin',
+        'salary_netto',
+        )
+    list_display = (
+        'gov_inst',
+        'name',
+        'salary_brutto'
+    )
+
+    ordering = ('name',)
+
+
 class GovInstitutionAdmin(admin.ModelAdmin):
+    inlines = (GovInstEmployeesAdmin, )
     list_display = (
         'name',
         'registration_number',
@@ -74,6 +94,23 @@ class GovInstitutionAdmin(admin.ModelAdmin):
     )
 
 
+class WahrehouseAdmin(admin.ModelAdmin):
+    list_display = (
+        'name_low',
+        'name',
+        'warehouse_code',
+        "street_adress_1",
+        "street_adress_2",
+        "city",
+        "post_code",
+        'country',
+    )
+    readonly_fields = (
+        'name_low',
+    )
+
+
 # Register the Company model with the custom admin class
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(GovInstitution, GovInstitutionAdmin)
+admin.site.register(Warehouse, WahrehouseAdmin)

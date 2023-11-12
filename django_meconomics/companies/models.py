@@ -270,6 +270,27 @@ class GovInstitution(models.Model):
     def get_house_number(self):
         return self.street_adress_1 or 0
 
+    # Signal sent to companies-signals
+    def salaries_total(self):
+        """
+        Update total salaries each time a employee is added,
+        or his salary has been changed.
+        """
+        print("Signal executed")
+        self.total_bruto_salaries = self.gov_employer.aggregate(
+            Sum('salary_brutto'))['salary_brutto__sum'] or 0
+        self.total_salary_vsaoi_dd = self.gov_employer.aggregate(
+            Sum('salary_vsaoi_dd'))['salary_vsaoi_dd__sum'] or 0
+        self.total_salary_vsaoi_dn = self.gov_employer.aggregate(
+            Sum('salary_vsaoi_dn'))['salary_vsaoi_dn__sum'] or 0
+        self.total_salary_iin = self.gov_employer.aggregate(
+            Sum('salary_iin'))['salary_iin__sum'] or 0
+        self.total_salary_netto = self.gov_employer.aggregate(
+            Sum('salary_netto'))['salary_netto__sum'] or 0
+        self.total_salaries_cost = self.total_bruto_salaries + self.total_salary_vsaoi_dd or 0  # noqa
+        self.average_salary_brutto = self.total_bruto_salaries / self.employee_count if self.employee_count != 0 else 0  # noqa
+        super().save()
+
     def save(self, *args, **kwargs):
         if not self.registration_number:
             gov_inst__count = GovInstitution.objects.all().count() or 0
@@ -277,15 +298,102 @@ class GovInstitution(models.Model):
                 "900010" + str(gov_inst__count + 1).zfill(4)
             )
         self.name_low = remove_accents(self.name.replace(" ", "_")).lower()
-        self.employee_count = 0
+        self.employee_count = GovInstEmployees.objects.filter(gov_inst=self.id).count() or 0  # noqa
+        total_bruto_salaries = self.total_bruto_salaries or 0
+        total_salary_vsaoi_dd = self.total_salary_vsaoi_dd or 0
         if not self.employee_count:
             self.total_salaries_cost = 0
             self.average_salary_brutto = 0
         else:
             self.total_salaries_cost = (
-                self.total_bruto_salaries + self.total_salary_vsaoi_dd or 0
+                total_bruto_salaries + total_salary_vsaoi_dd or 0
             )
             self.average_salary_brutto = (
-                self.total_bruto_salaries / self.employee_count
+                total_bruto_salaries / self.employee_count
             )
+        super().save(*args, **kwargs)
+
+
+class GovInstEmployees(models.Model):
+    gov_inst = models.ForeignKey(
+        GovInstitution,
+        on_delete=models.CASCADE,
+        related_name='gov_employer')
+    name = models.ForeignKey(
+        Citizen,
+        on_delete=models.CASCADE,
+        related_name='gov_employee')
+    role = models.CharField(max_length=254)
+    salary_brutto = models.DecimalField(
+        max_digits=8, decimal_places=2, blank=True, null=True)
+    salary_vsaoi_dd = models.DecimalField(
+        max_digits=8, decimal_places=2, blank=True, null=True)
+    salary_vsaoi_dn = models.DecimalField(
+        max_digits=8, decimal_places=2, blank=True, null=True)
+    salary_iin = models.DecimalField(
+        max_digits=8, decimal_places=2, blank=True, null=True)
+    salary_netto = models.DecimalField(
+        max_digits=8, decimal_places=2, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        """
+        Override the original save method to set the salary levels
+        if it hasn't been set already.
+        """
+        # Fetch the latest settings
+        latest_settings = get_object_or_404(AppSettings, valid=True)
+        # Calculate the various components of the salary
+        self.salary_vsaoi_dd = (self.salary_brutto / 100) * latest_settings.vsaoi_dd  # noqa
+        self.salary_vsaoi_dn = (self.salary_brutto / 100) * latest_settings.vsaoi_dn  # noqa
+        # Calculate IIN component, considering the no_iin_level
+        taxable_amount = self.salary_brutto - self.salary_vsaoi_dn - latest_settings.no_iin_level  # noqa
+        iin_calc = (taxable_amount / 100) * latest_settings.iin_rate
+        # Set IIN based on calculated value, ensuring it's not less than 0
+        self.salary_iin = max(iin_calc, 0)
+        # Calculate net salary
+        self.salary_netto = self.salary_brutto - self.salary_vsaoi_dn - self.salary_iin  # noqa
+        # Call the parent save method to persist changes
+        super().save(*args, **kwargs)
+
+
+# Warehouse models
+class Warehouse(models.Model):
+    company = models.ForeignKey(
+        Company,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+        related_name='warehouse_owner')
+    name_low = models.CharField(
+        max_length=254,
+        blank=True,
+        null=True,
+        default="warehouse"
+    )
+    name = models.CharField(max_length=254, blank=True)
+    warehouse_code = models.CharField(default="0", max_length=6, blank=True)
+    street_adress_1 = models.IntegerField(default=0, blank=True)
+    street_adress_2 = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    post_code = models.CharField(max_length=6, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return self.name_low
+
+    def get_display_name(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        """
+        Override the original save method to set the warehouse name and codes
+        if it hasn't been set already.
+        """
+        if self.warehouse_code == "0":
+            warehouse_count = Warehouse.objects.filter(company=self.company).count() or 0  # noqa
+            warehouse_owner = get_object_or_404(Company, name=self.company.name)
+            self.warehouse_code = (
+                str(warehouse_owner.manufacturer_code) + str(warehouse_count + 1).zfill(2)  # noqa
+            )
+        self.name_low = self.name.replace(" ", "_").lower()
         super().save(*args, **kwargs)
