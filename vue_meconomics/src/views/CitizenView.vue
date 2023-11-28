@@ -11,14 +11,14 @@
         @mouseleave="showTooltip = false"
         @click="toggleModal"
       >
-        <i class="fas fa-plus"></i>
+        <div v-if="showTooltip">Add New Citizen</div>
+        <i v-else class="fas fa-plus"></i>
       </div>
       <AddCitizenModal
         :isVisible="showModal"
         @close="toggleModal"
         @citizenAdded="handleCitizenAdded"
       ></AddCitizenModal>
-      <div v-if="showTooltip" class="tooltip">Add New Citizen</div>
       <TableView
         :visibleColumns="visibleColumns"
         :items="citizens"

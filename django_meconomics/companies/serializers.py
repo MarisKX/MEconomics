@@ -1,5 +1,13 @@
 from rest_framework import serializers
-from .models import Company, GovInstitution, CompanyEmployees
+# Model Imports
+from .models import (
+  Company,
+  GovInstitution,
+  CompanyEmployees,
+  GovInstEmployees,
+  Warehouse,
+)
+from citizens.models import Citizen
 
 
 owner_type_choice_field = serializers.ChoiceField(
@@ -82,13 +90,16 @@ class CompanyEmployeesSerializer(serializers.ModelSerializer):
     Serializer for displaying detailed information
     about a company employees
     """
-    name = serializers.SerializerMethodField()
+    name = serializers.PrimaryKeyRelatedField(queryset=Citizen.objects.all(), write_only=True)
+    full_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = CompanyEmployees
         fields = [
+            'id',
             'company',
             'name',
+            'full_name',
             'role',
             'salary_brutto',
             'salary_vsaoi_dd',
@@ -97,8 +108,29 @@ class CompanyEmployeesSerializer(serializers.ModelSerializer):
             'salary_netto',
         ]
 
-    def get_name(self, obj):
-        return obj.name.full_name
+    def get_full_name(self, obj):
+        return obj.name.full_name if obj.name else None
+
+
+class CompanyWarehousesSerializer(serializers.ModelSerializer):
+    """
+    Serializer for displaying detailed information
+    about a company warehouses
+    """
+
+    class Meta:
+        model = Warehouse
+        fields = [
+            'id',
+            'company',
+            'name',
+            'warehouse_code',
+            'street_adress_1',
+            'street_adress_2',
+            'city',
+            'post_code',
+            'country',
+        ]
 
 
 class CompanyDetailSerializer(CompanySerializer):
@@ -109,6 +141,11 @@ class CompanyDetailSerializer(CompanySerializer):
         many=True,
         read_only=True,
         source='employer'
+    )
+    warehouses = CompanyWarehousesSerializer(
+        many=True,
+        read_only=True,
+        source='warehouse_owner'
     )
 
     class Meta(CompanySerializer.Meta):
@@ -131,6 +168,7 @@ class CompanyDetailSerializer(CompanySerializer):
             'total_salary_netto',
             'average_salary_brutto',
             'employees',
+            'warehouses',
         ]
 
 

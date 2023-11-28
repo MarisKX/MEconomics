@@ -68,7 +68,7 @@ a {
 }
 .add-sign:before {
   content: "";
-  position: absolute;
+  position: fixed;
   bottom: 0;
   right: 0;
   border-style: solid;
@@ -79,19 +79,9 @@ a {
 .add-sign:hover:before {
   border-width: 0 30px 30px 0;
 }
-.tooltip {
-  position: absolute;
-  top: 34px;
-  left: 190px;
-  transform: translateX(-50%);
-  background-color: #555;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 0.9rem;
-  visibility: visible;
-  opacity: 1;
-  transition: opacity 0.3s;
+.add-sign:hover {
+  width: 400px;
+  border-radius: 10px 10px 0 10px;
 }
 
 .modal {

@@ -5,7 +5,7 @@
     <DataRow />
     <hr class="top-data-seperator" />
     <div class="main">
-      <div v-if="companyDetails" class="my-5">
+      <div v-if="companyDetails" class="my-5 mb-5 pb-5">
         <div class="row">
           <div class="col-6"><h4>General Data</h4></div>
           <div class="col-6">Stats</div>
@@ -153,13 +153,48 @@
           </div>
         </div>
       </div>
-      <div class="text-center">
+      <div class="text-center mt-5">
         <h4>Employees:</h4>
+      </div>
+      <div
+        class="add-sign"
+        @mouseover="showTooltipEmployees = true"
+        @mouseleave="showTooltipEmployees = false"
+        @click="toggleEmployeeModal"
+      >
+        <div v-if="showTooltipEmployees">Add New Employee</div>
+        <i v-else class="fas fa-plus"></i>
+      </div>
+      <AddEmployeeModal
+        v-if="companyDetails"
+        :isVisible="showEmployeeModal"
+        @close="toggleEmployeeModal"
+        @employeeAdded="handleEmployeeAdded"
+        :companyDetails="companyDetails"
+      ></AddEmployeeModal>
+
+      <TableView
+        :visibleColumns="visibleEmploeyeesColumns"
+        :items="employees"
+        :detailsRouteName="'citizen-details'"
+      />
+
+      <div class="text-center mt-5">
+        <h4>Warehouses:</h4>
+      </div>
+      <div
+        class="add-sign"
+        @mouseover="showTooltipWarehouse = true"
+        @mouseleave="showTooltipWarehouse = false"
+        @click="toggleModal"
+      >
+        <div v-if="showTooltipWarehouse">Add New Warehouse</div>
+        <i v-else class="fas fa-plus"></i>
       </div>
 
       <TableView
-        :visibleColumns="visibleColumns"
-        :items="employees"
+        :visibleColumns="visibleWarehousesColumns"
+        :items="warehouses"
         :detailsRouteName="'citizen-details'"
       />
     </div>
@@ -171,12 +206,14 @@ import axios from "axios";
 import TopNav from "../components/TopNav.vue";
 import DataRow from "../components/DataRow.vue";
 import TableView from "../components/TableView.vue";
+import AddEmployeeModal from "../components/AddEmployeeModal.vue";
 export default {
   name: "CompanyDetailsView",
   components: {
     TopNav,
     DataRow,
     TableView,
+    AddEmployeeModal,
   },
   props: {
     id: {
@@ -187,15 +224,21 @@ export default {
   data() {
     return {
       companyDetails: null,
-      columns: [],
+      employeesColumns: [],
+      warehousesColumns: [],
       employees: [],
-      showTooltip: false,
-      showModal: false,
+      warehouses: [],
+      showTooltipEmployees: false,
+      showTooltipWarehouse: false,
+      showEmployeeModal: false,
     };
   },
   computed: {
-    visibleColumns() {
-      return this.columns.slice(1);
+    visibleEmploeyeesColumns() {
+      return this.employeesColumns.slice(2);
+    },
+    visibleWarehousesColumns() {
+      return this.warehousesColumns.slice(2);
     },
   },
   mounted() {
@@ -220,7 +263,7 @@ export default {
         // Check if the company has employees
         if (response.data.employees && response.data.employees.length > 0) {
           const firstEmployee = response.data.employees[0];
-          this.columns = Object.keys(firstEmployee).map((key) => ({
+          this.employeesColumns = Object.keys(firstEmployee).map((key) => ({
             label: key.replace(/_/g, " ").toUpperCase(),
             field: key,
             sortable: true,
@@ -228,13 +271,30 @@ export default {
 
           this.employees = response.data.employees;
         }
+        // Check if the company has warehouses
+        if (response.data.warehouses && response.data.warehouses.length > 0) {
+          const firstWarehouse = response.data.warehouses[0];
+          this.warehousesColumns = Object.keys(firstWarehouse).map((key) => ({
+            label: key.replace(/_/g, " ").toUpperCase(),
+            field: key,
+            sortable: true,
+          }));
+
+          this.warehouses = response.data.warehouses;
+        }
       } catch (error) {
         console.error(error);
       }
     },
-    toggleModal() {
-      this.showModal = !this.showModal;
+    toggleEmployeeModal() {
+      this.showEmployeeModal = !this.showEmployeeModal;
+    },
+    handleEmployeeAdded(employee) {
+      this.employees.push(employee);
+      this.fetchData();
     },
   },
 };
 </script>
+
+<style></style>

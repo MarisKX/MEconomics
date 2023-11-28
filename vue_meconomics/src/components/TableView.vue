@@ -110,6 +110,9 @@
               ></span>
               <!-- false -->
             </div>
+            <div v-else-if="item[column.field] === 0">
+              <span><i class="fa-solid fa-minus"></i> </span>
+            </div>
             <router-link
               v-else
               :to="{

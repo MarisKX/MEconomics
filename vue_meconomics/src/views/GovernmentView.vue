@@ -11,7 +11,8 @@
         @mouseleave="showTooltip = false"
         @click="toggleModal"
       >
-        <i class="fas fa-plus"></i>
+        <div v-if="showTooltip">Add New Government Institutution</div>
+        <i v-else class="fas fa-plus"></i>
       </div>
       <AddGovernmentModal
         :isVisible="showModal"
@@ -19,9 +20,6 @@
         @governmentInstitutionAdded="handleGovernmentInstitutionAdded"
         :governmentInstitutions="governmentInstitutions"
       ></AddGovernmentModal>
-      <div v-if="showTooltip" class="tooltip">
-        Add New Government Institutution
-      </div>
       <TableView
         :visibleColumns="visibleColumns"
         :items="governmentInstitutions"

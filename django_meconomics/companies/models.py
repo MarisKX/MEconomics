@@ -123,6 +123,7 @@ class Company(models.Model):
         or his salary has been changed.
         """
         print("Signal executed")
+        self.employee_count = CompanyEmployees.objects.filter(company=self.id).count() or 0  # noqa
         self.total_bruto_salaries = self.employer.aggregate(
             Sum('salary_brutto'))['salary_brutto__sum'] or 0
         self.total_salary_vsaoi_dd = self.employer.aggregate(
@@ -400,3 +401,37 @@ class Warehouse(models.Model):
             )
         self.name_low = self.name.replace(" ", "_").lower()
         super().save(*args, **kwargs)
+
+
+class WarehouseLocation(models.Model):
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['warehouse', 'code'], name='unique_warehouse_code')
+        ]
+
+    warehouse = models.ForeignKey(
+        Warehouse,
+        null=True,
+        blank=False,
+        on_delete=models.CASCADE,
+        related_name='loc_warehouse')
+    code = models.CharField(max_length=12)
+    location_type_choices = [
+        ('0', 'General'),
+        ('1', 'Sales'),
+        ('2', 'RawMat'),
+        ('3', 'Prod'),
+        ('4', 'Internal'),
+        ('5', 'Retail Sale'),
+        ('6', 'Construction Bin')
+    ]
+    location_type = models.CharField(
+        max_length=8, choices=location_type_choices, default='0')
+    multi_article = models.BooleanField(default=True)
+    block_in = models.BooleanField(default=False)
+    block_out = models.BooleanField(default=False)
+    capacity = models.IntegerField(default=0, blank=True)
+
+    def __str__(self):
+        return self.code

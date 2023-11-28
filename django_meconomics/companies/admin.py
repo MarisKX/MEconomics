@@ -7,6 +7,7 @@ from companies.models import (
     CompanyEmployees,
     GovInstEmployees,
     Warehouse,
+    WarehouseLocation,
 )
 
 
@@ -94,7 +95,20 @@ class GovInstitutionAdmin(admin.ModelAdmin):
     )
 
 
+class WarehouseLocationAdmin(admin.TabularInline):
+    model = WarehouseLocation
+    list_display = (
+        'code',
+        'location_type',
+        'multi_article',
+        'block_in',
+        'block_out',
+        'capacity',
+    )
+
+
 class WahrehouseAdmin(admin.ModelAdmin):
+    inlines = (WarehouseLocationAdmin, )
     list_display = (
         'name_low',
         'name',

@@ -11,7 +11,8 @@
         @mouseleave="showTooltip = false"
         @click="toggleModal"
       >
-        <i class="fas fa-plus"></i>
+        <div v-if="showTooltip">Add New Company</div>
+        <i v-else class="fas fa-plus text-start"></i>
       </div>
       <AddCompanyModal
         :isVisible="showModal"
@@ -19,7 +20,6 @@
         @companyAdded="handleCompanyAdded"
         :companies="companies"
       ></AddCompanyModal>
-      <div v-if="showTooltip" class="tooltip">Add New Company</div>
       <TableView
         :visibleColumns="visibleColumns"
         :items="companies"
@@ -92,6 +92,7 @@ export default {
     },
     handleCompanyAdded(company) {
       this.companies.push(company);
+      this.fetchData();
     },
   },
 };
